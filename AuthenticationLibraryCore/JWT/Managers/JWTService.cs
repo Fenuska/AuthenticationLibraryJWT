@@ -14,9 +14,9 @@ namespace AuthenticationLibraryCore.JWT.Managers
 
         public JWTService(IAuthContainerModel model)
         {
-            if (model is null || model.Claims is null || model.Claims.Length == 0)
+            if (model is null)
             {
-                throw new ArgumentException($"'{nameof(model)}' cannot be null or empty", nameof(model));
+                throw new ArgumentException($"'{nameof(model)}' cannot be null", nameof(model));
             }
 
             Model = model;
@@ -32,7 +32,8 @@ namespace AuthenticationLibraryCore.JWT.Managers
             {
                 Subject = new ClaimsIdentity(Model.Claims),
                 Expires = DateTime.UtcNow.AddMinutes(Convert.ToInt32(Model.ExpireMinutes)),
-                SigningCredentials = new SigningCredentials(GetSummetricSecurityKey(), Model.SecureAlgorithm)
+                SigningCredentials = new SigningCredentials(GetSummetricSecurityKey(), Model.SecureAlgorithm),
+                Issuer = Model.Issuer
             };
 
             JwtSecurityTokenHandler jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
@@ -98,7 +99,7 @@ namespace AuthenticationLibraryCore.JWT.Managers
                 ClaimsPrincipal tokenValid = jwtSecurityTokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken validatedToken);
                 return true;
             }
-            catch
+            catch (Exception)
             {
                 return false;
             }
@@ -117,9 +118,10 @@ namespace AuthenticationLibraryCore.JWT.Managers
         {
             return new TokenValidationParameters()
             {
-                ValidateIssuer = false,
+                ValidateIssuer = true,
                 ValidateAudience = false,
-                IssuerSigningKey = GetSummetricSecurityKey()
+                IssuerSigningKey = GetSummetricSecurityKey()      ,
+                ValidIssuer = Model.Issuer
             };
         }
     }

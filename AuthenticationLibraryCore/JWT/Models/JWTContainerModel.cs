@@ -23,26 +23,32 @@ namespace AuthenticationLibraryCore.JWT.Models
         /// 
         /// </summary>
         public Claim[] Claims { get; set; }
+       /// <summary>
+       /// 
+       /// </summary>
+        public string Issuer { get; set; }
 
         /// <summary>
         /// Model that contains all the data to perform the encryption, and store the secret key for the decryption
         /// </summary>
         /// <param name="secretKey">Secret key. Must be a long string. Short string can throw an exception during encryption</param>
         /// <param name="expireMinutes">Amount of minutes before token expires</param>
-        /// <param name="Claims">Key value pairs will be decrypted in the token</param>
-        public JWTContainerModel(string secretKey, int expireMinutes, Dictionary<string, string> Claims)
+        /// <param name="Issuer">Set </param>
+        /// <param name="claims">Key value pairs will be decrypted in the token</param>
+        public JWTContainerModel(string secretKey, int expireMinutes, string issuer, Dictionary<string, string> claims)
         {
             SecretKey = secretKey;
             ExpireMinutes = expireMinutes;
+            Issuer = issuer;
 
-            var claims = new List<Claim>();
+            var claimObjects = new List<Claim>();
 
-            foreach (var keyValue in Claims)
+            foreach (var keyValue in claims ?? new Dictionary<string, string>())
             {
-                claims.Add(new Claim(keyValue.Key, keyValue.Value));
+                claimObjects.Add(new Claim(keyValue.Key, keyValue.Value));
             }
 
-            this.Claims = claims.ToArray();
+            this.Claims = claimObjects.ToArray();
         }
     }
 }

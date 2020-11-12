@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.Collections.Generic;
+using System.Security.Claims;
 
 namespace AuthenticationLibraryCore.JWT.Models
 {
@@ -7,6 +8,8 @@ namespace AuthenticationLibraryCore.JWT.Models
         string SecretKey { get; set; }
         string SecureAlgorithm { get; set; }
         int ExpireMinutes { get; set; }
+        string Issuer { get; set; }
         Claim[] Claims { get; set; }
+
     }
 }
